@@ -1,7 +1,7 @@
 package com.booking.hotel.controller;
 
 import com.booking.hotel.dto.room.RoomDtoReq;
-import com.booking.hotel.model.Room;
+import com.booking.hotel.dto.room.RoomDtoRes;
 import com.booking.hotel.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,28 +21,28 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<Room> addRoom(@Valid @RequestBody RoomDtoReq roomDtoReq) {
+    public ResponseEntity<RoomDtoRes> addRoom(@Valid @RequestBody RoomDtoReq roomDtoReq) {
         return ResponseEntity.status(HttpStatus.CREATED).body(roomService.addRoom(roomDtoReq));
     }
 
     @GetMapping
-    public ResponseEntity<List<Room>> getAllRoomsByHotelId(@RequestParam Long hotelId) {
+    public ResponseEntity<List<RoomDtoRes>> getAllRoomsByHotelId(@RequestParam Long hotelId) {
         return ResponseEntity.status(HttpStatus.OK).body(roomService.getAllRoomsByHotelId(hotelId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Room> getRoomById(@PathVariable Long id) {
+    public ResponseEntity<RoomDtoRes> getRoomById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(roomService.getRoomById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Room> deleteRoomById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRoomById(@PathVariable Long id) {
         roomService.deleteRoomById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Room> updateRoom(@PathVariable Long id, @Valid @RequestBody RoomDtoReq roomDtoReq) {
+    public ResponseEntity<RoomDtoRes> updateRoom(@PathVariable Long id, @Valid @RequestBody RoomDtoReq roomDtoReq) {
         return ResponseEntity.status(HttpStatus.OK).body(roomService.updateRoom(roomDtoReq, id));
     }
 }
