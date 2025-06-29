@@ -5,17 +5,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@RequiredArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Room {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,8 @@ public class Room {
     private BigDecimal price;
     private RoomStatus status;
     private final LocalDateTime createdAt =  LocalDateTime.now();
-    @ManyToOne(cascade = CascadeType.REMOVE)
+
+    @ManyToOne
+    @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 }
