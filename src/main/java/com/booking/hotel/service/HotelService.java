@@ -57,6 +57,11 @@ public class HotelService {
     }
 
     public void deleteHotel(Long id) {
-        hotelDAO.deleteById(id);
+        Optional<Hotel> hotelOptional = hotelDAO.findById(id);
+        if (hotelOptional.isPresent()) {
+            hotelDAO.deleteById(id);
+        } else {
+            throw new NotFoundException("Hotel with id " + id + " not found");
+        }
     }
 }
