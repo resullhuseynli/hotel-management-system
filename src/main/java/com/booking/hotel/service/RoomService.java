@@ -5,6 +5,7 @@ import com.booking.hotel.dao.RoomDAO;
 import com.booking.hotel.dto.room.RoomDtoReq;
 import com.booking.hotel.dto.room.RoomDtoRes;
 import com.booking.hotel.exception.NotFoundException;
+import com.booking.hotel.mapper.RoomMapper;
 import com.booking.hotel.model.Hotel;
 import com.booking.hotel.model.Room;
 import lombok.RequiredArgsConstructor;
@@ -20,44 +21,45 @@ public class RoomService {
 
     private final RoomDAO roomDAO;
     private final HotelDAO hotelDAO;
+    private final RoomMapper roomMapper;
 
-    public Room addRoom(RoomDtoReq roomDtoReq) {
-        Room room = new Room();
-        room.setRoomNumber(roomDtoReq.getRoomNumber());
-        room.setPrice(roomDtoReq.getPrice());
-        room.setStatus(roomDtoReq.getStatus());
-        Optional<Hotel> hotel = hotelDAO.findById(roomDtoReq.getHotelId());
-        if (hotel.isPresent()) {
-            room.setHotel(hotel.get());
-        } else {
-            throw new NotFoundException("Hotel with id " + roomDtoReq.getHotelId() + " not found");
-        }
-        return roomDAO.save(room);
+    public RoomDtoRes addRoom(RoomDtoReq roomDtoReq) {
+        return roomMapper.entityToDto(roomDAO.save(roomMapper.dtoToEntity(roomDtoReq)));
     }
 
-    public List<Room> getAllRoomsByHotelId(Long hotelId) {
+    public List<RoomDtoRes> getAllRoomsByHotelId(Long hotelId) {
         Optional<List<Room>> rooms = roomDAO.getAllRoomsByHotelId(hotelId);
         if (rooms.isPresent()) {
-            return  rooms.get();
+            List<RoomDtoRes> roomDtoResList = new ArrayList<>();
+            for (Room room : rooms.get()) {
+                RoomDtoRes roomDtoRes = roomMapper.entityToDto(room);
+                roomDtoResList.add(roomDtoRes);
+            }
+            return roomDtoResList;
         } else {
             throw new NotFoundException("Hotel with id " + hotelId + " not found");
         }
     }
 
-    public Room getRoomById(long id) {
+    public RoomDtoRes getRoomById(Long id) {
         Optional<Room> room = roomDAO.findById(id);
         if (room.isPresent()) {
-            return room.get();
-        }  else {
+            return roomMapper.entityToDto(room.get());
+        } else {
             throw new NotFoundException("Room with id " + id + " not found");
         }
     }
 
     public void deleteRoomById(Long id) {
-        roomDAO.deleteById(id);
+        Optional<Room> room = roomDAO.findById(id);
+        if (room.isPresent()) {
+            roomDAO.delete(room.get());
+        } else {
+            throw new NotFoundException("Room with id " + id + " not found");
+        }
     }
 
-    public Room updateRoom(RoomDtoReq roomDtoReq, long id) {
+    public RoomDtoRes updateRoom(RoomDtoReq roomDtoReq, Long id) {
         Optional<Room> room = roomDAO.findById(id);
         if (room.isPresent()) {
             room.get().setRoomNumber(roomDtoReq.getRoomNumber());
@@ -69,7 +71,7 @@ public class RoomService {
             } else {
                 throw new NotFoundException("Hotel with id " + roomDtoReq.getHotelId() + " not found");
             }
-            return  roomDAO.save(room.get());
+            return roomMapper.entityToDto(roomDAO.save(room.get()));
         } else {
             throw new NotFoundException("Room with id " + id + " not found");
         }
