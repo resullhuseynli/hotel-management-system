@@ -2,13 +2,15 @@ package com.booking.hotel.service;
 
 import com.booking.hotel.dao.HotelDAO;
 import com.booking.hotel.dao.RoomDAO;
-import com.booking.hotel.dto.RoomDTO;
+import com.booking.hotel.dto.room.RoomDtoReq;
+import com.booking.hotel.dto.room.RoomDtoRes;
 import com.booking.hotel.exception.NotFoundException;
 import com.booking.hotel.model.Hotel;
 import com.booking.hotel.model.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,24 +21,24 @@ public class RoomService {
     private final RoomDAO roomDAO;
     private final HotelDAO hotelDAO;
 
-    public Room addRoom(RoomDTO roomDTO) {
+    public Room addRoom(RoomDtoReq roomDtoReq) {
         Room room = new Room();
-        room.setRoomNumber(roomDTO.getRoomNumber());
-        room.setPrice(roomDTO.getPrice());
-        room.setStatus(roomDTO.getStatus());
-        Optional<Hotel> hotel = hotelDAO.findById(roomDTO.getHotelId());
+        room.setRoomNumber(roomDtoReq.getRoomNumber());
+        room.setPrice(roomDtoReq.getPrice());
+        room.setStatus(roomDtoReq.getStatus());
+        Optional<Hotel> hotel = hotelDAO.findById(roomDtoReq.getHotelId());
         if (hotel.isPresent()) {
             room.setHotel(hotel.get());
         } else {
-            throw new NotFoundException("Hotel with id " + roomDTO.getHotelId() + " not found");
+            throw new NotFoundException("Hotel with id " + roomDtoReq.getHotelId() + " not found");
         }
         return roomDAO.save(room);
     }
 
-    public List<Room> getAllRoomsByHotelId(long hotelId) {
+    public List<Room> getAllRoomsByHotelId(Long hotelId) {
         Optional<List<Room>> rooms = roomDAO.getAllRoomsByHotelId(hotelId);
         if (rooms.isPresent()) {
-            return rooms.get();
+            return  rooms.get();
         } else {
             throw new NotFoundException("Hotel with id " + hotelId + " not found");
         }
@@ -51,21 +53,21 @@ public class RoomService {
         }
     }
 
-    public void deleteRoomById(long id) {
+    public void deleteRoomById(Long id) {
         roomDAO.deleteById(id);
     }
 
-    public Room updateRoom(RoomDTO roomDTO,  long id) {
+    public Room updateRoom(RoomDtoReq roomDtoReq, long id) {
         Optional<Room> room = roomDAO.findById(id);
         if (room.isPresent()) {
-            room.get().setRoomNumber(roomDTO.getRoomNumber());
-            room.get().setPrice(roomDTO.getPrice());
-            room.get().setStatus(roomDTO.getStatus());
-            Optional<Hotel> hotel = hotelDAO.findById(roomDTO.getHotelId());
+            room.get().setRoomNumber(roomDtoReq.getRoomNumber());
+            room.get().setPrice(roomDtoReq.getPrice());
+            room.get().setStatus(roomDtoReq.getStatus());
+            Optional<Hotel> hotel = hotelDAO.findById(roomDtoReq.getHotelId());
             if (hotel.isPresent()) {
                 room.get().setHotel(hotel.get());
             } else {
-                throw new NotFoundException("Hotel with id " + roomDTO.getHotelId() + " not found");
+                throw new NotFoundException("Hotel with id " + roomDtoReq.getHotelId() + " not found");
             }
             return  roomDAO.save(room.get());
         } else {
