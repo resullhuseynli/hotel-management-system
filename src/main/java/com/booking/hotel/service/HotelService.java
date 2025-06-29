@@ -1,12 +1,15 @@
 package com.booking.hotel.service;
 
 import com.booking.hotel.dao.HotelDAO;
-import com.booking.hotel.dto.HotelDTO;
+import com.booking.hotel.dto.hotel.HotelDtoReq;
+import com.booking.hotel.dto.hotel.HotelDtoRes;
 import com.booking.hotel.exception.NotFoundException;
+import com.booking.hotel.mapper.HotelMapper;
 import com.booking.hotel.model.Hotel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,33 +18,39 @@ import java.util.Optional;
 public class HotelService {
 
     private final HotelDAO hotelDAO;
+    private final HotelMapper hotelMapper;
 
-    public Hotel addHotel(HotelDTO hotelDTO) {
-        Hotel hotel = new Hotel();
-        hotel.setName(hotelDTO.getName());
-        hotel.setLocation(hotelDTO.getLocation());
-        return hotelDAO.save(hotel);
+    public HotelDtoRes addHotel(HotelDtoReq hotelDtoReq) {
+        Hotel hotel = hotelMapper.HotelToEntity(hotelDtoReq);
+        hotelDAO.save(hotel);
+        return hotelMapper.HotelToDtoRes(hotel);
     }
 
-    public List<Hotel> getAllHotels() {
-        return hotelDAO.findAll();
+    public List<HotelDtoRes> getAllHotels() {
+        List<Hotel> hotels = hotelDAO.findAll();
+        List<HotelDtoRes> hotelDtoRes = new ArrayList<>();
+        for (Hotel hotel : hotels) {
+            hotelDtoRes.add(hotelMapper.HotelToDtoRes(hotel));
+        }
+        return hotelDtoRes;
     }
 
-    public Hotel getHotelById(long id) {
+    public HotelDtoRes getHotelById(long id) {
         Optional<Hotel> hotel = hotelDAO.findById(id);
         if (hotel.isPresent()) {
-            return hotel.get();
+            return hotelMapper.HotelToDtoRes(hotel.get());
         } else {
             throw new NotFoundException("Hotel with id " + id + " not found");
         }
     }
 
-    public Hotel updateHotel(HotelDTO hotelDTO, Long id) {
-        Optional<Hotel> hotel = hotelDAO.findById(id);
-        if (hotel.isPresent()) {
-            hotel.get().setName(hotelDTO.getName());
-            hotel.get().setLocation(hotelDTO.getLocation());
-            return hotelDAO.save(hotel.get());
+    public HotelDtoRes updateHotel(HotelDtoReq hotelDtoReq, Long id) {
+        Optional<Hotel> hotelOptional = hotelDAO.findById(id);
+        if (hotelOptional.isPresent()) {
+            hotelOptional.get().setName(hotelDtoReq.getName());
+            hotelOptional.get().setLocation(hotelDtoReq.getLocation());
+            hotelDAO.save(hotelOptional.get());
+            return hotelMapper.HotelToDtoRes(hotelOptional.get());
         } else {
             throw new NotFoundException("Hotel with id " + id + " not found");
         }
