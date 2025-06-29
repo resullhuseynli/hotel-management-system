@@ -1,6 +1,7 @@
 package com.booking.hotel.controller;
 
-import com.booking.hotel.dto.HotelDTO;
+import com.booking.hotel.dto.hotel.HotelDtoReq;
+import com.booking.hotel.dto.hotel.HotelDtoRes;
 import com.booking.hotel.model.Hotel;
 import com.booking.hotel.service.HotelService;
 import jakarta.validation.Valid;
@@ -20,17 +21,17 @@ public class HotelController {
     private final HotelService hotelService;
 
     @PostMapping
-    public ResponseEntity<Hotel> addHotel(@Valid @RequestBody HotelDTO hotel) {
+    public ResponseEntity<HotelDtoRes> addHotel(@Valid @RequestBody HotelDtoReq hotel) {
         return ResponseEntity.status(HttpStatus.CREATED).body(hotelService.addHotel(hotel));
     }
 
     @GetMapping
-    public ResponseEntity<List<Hotel>> getAllHotels() {
+    public ResponseEntity<List<HotelDtoRes>> getAllHotels() {
         return ResponseEntity.status(HttpStatus.OK).body(hotelService.getAllHotels());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Hotel> getHotelById(@PathVariable Long id) {
+    public ResponseEntity<HotelDtoRes> getHotelById(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(hotelService.getHotelById(id));
     }
 
@@ -41,7 +42,7 @@ public class HotelController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Hotel> updateHotel(@Valid @RequestBody HotelDTO hotelDTO, @PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(hotelService.updateHotel(hotelDTO, id));
+    public ResponseEntity<HotelDtoRes> updateHotel(@Valid @RequestBody HotelDtoReq hotelDtoReq, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(hotelService.updateHotel(hotelDtoReq, id));
     }
 }
