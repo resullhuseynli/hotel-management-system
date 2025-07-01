@@ -31,6 +31,7 @@ public class BookingMapper {
         if(room.isPresent()){
             booking.setRoom(room.get());
             room.get().setStatus(RoomStatus.BOOKED);
+            room.get().setBooking(booking);
             roomDAO.save(room.get());
         } else {
             throw new NotFoundException("Room with id: " + bookingDtoReq.getRoomId() + " not found");

@@ -55,6 +55,7 @@ public class BookingService {
             Room room = roomDAO.findById(booking.get().getRoom().getId())
                     .orElseThrow(() -> new NotFoundException("Room with id: " + booking.get().getRoom().getId() + " not found"));
             room.setStatus(RoomStatus.AVAILABLE);
+            room.setBooking(null);
             roomDAO.save(room);
             bookingDAO.delete(booking.get());
         }   else {
