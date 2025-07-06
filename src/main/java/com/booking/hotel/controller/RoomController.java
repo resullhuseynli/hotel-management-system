@@ -1,7 +1,7 @@
 package com.booking.hotel.controller;
 
-import com.booking.hotel.dto.room.RoomDtoReq;
-import com.booking.hotel.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.dto.room.RoomDtoReq;
+import com.booking.hotel.dao.dto.room.RoomDtoRes;
 import com.booking.hotel.service.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
