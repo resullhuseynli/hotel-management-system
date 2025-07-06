@@ -1,17 +1,15 @@
 package com.booking.hotel.mapper;
 
 import com.booking.hotel.dao.RoomDAO;
-import com.booking.hotel.dto.booking.BookingDtoReq;
-import com.booking.hotel.dto.booking.BookingDtoRes;
-import com.booking.hotel.dto.room.RoomDtoRes;
-import com.booking.hotel.enums.RoomStatus;
+import com.booking.hotel.dao.dto.booking.BookingDtoReq;
+import com.booking.hotel.dao.dto.booking.BookingDtoRes;
+import com.booking.hotel.dao.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.model.Booking;
+import com.booking.hotel.dao.model.Room;
+import com.booking.hotel.enums.BookingStatus;
 import com.booking.hotel.exception.NotFoundException;
-import com.booking.hotel.model.Booking;
-import com.booking.hotel.model.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -20,36 +18,30 @@ public class BookingMapper {
     private final RoomDAO roomDAO;
     private final RoomMapper roomMapper;
 
-    public Booking BookingDtoToBooking(BookingDtoReq bookingDtoReq){
-        Booking booking =  new Booking();
-        booking.setCostumerName(bookingDtoReq.getCostumerName());
-        booking.setCostumerEmail(bookingDtoReq.getCostumerEmail());
-        booking.setStartDate(bookingDtoReq.getStartDate());
-        booking.setEndDate(bookingDtoReq.getEndDate());
-        booking.setStatus(bookingDtoReq.getStatus());
-        Optional<Room> room = roomDAO.findById(bookingDtoReq.getRoomId());
-        if(room.isPresent()){
-            booking.setRoom(room.get());
-            room.get().setStatus(RoomStatus.BOOKED);
-            room.get().setBooking(booking);
-            roomDAO.save(room.get());
-        } else {
-            throw new NotFoundException("Room with id: " + bookingDtoReq.getRoomId() + " not found");
-        }
-        return booking;
+    public Booking dtoToEntity(BookingDtoReq bookingDtoReq) {
+        Room room = roomDAO.findById(bookingDtoReq.getRoomId())
+                .orElseThrow(() -> new NotFoundException("Room with id: " + bookingDtoReq.getRoomId() + " not found"));
+        return Booking.builder()
+                .status(BookingStatus.ACTIVE)
+                .room(room)
+                .endDate(bookingDtoReq.getEndDate())
+                .startDate(bookingDtoReq.getStartDate())
+                .costumerName(bookingDtoReq.getCostumerName())
+                .costumerEmail(bookingDtoReq.getCostumerEmail())
+                .build();
     }
 
-    public BookingDtoRes  BookingToBookingDto(Booking booking){
-        BookingDtoRes bookingDtoRes = new BookingDtoRes();
-        bookingDtoRes.setId(booking.getId());
-        bookingDtoRes.setCostumerName(booking.getCostumerName());
-        bookingDtoRes.setCostumerEmail(booking.getCostumerEmail());
-        bookingDtoRes.setStartDate(booking.getStartDate());
-        bookingDtoRes.setEndDate(booking.getEndDate());
-        bookingDtoRes.setStatus(booking.getStatus());
-        bookingDtoRes.setCreatedAt(booking.getCreatedAt());
-        RoomDtoRes  roomDtoRes = roomMapper.entityToDto(booking.getRoom());
-        bookingDtoRes.setRoom(roomDtoRes);
-        return bookingDtoRes;
+    public BookingDtoRes entityToDto(Booking booking) {
+        RoomDtoRes roomDtoRes = roomMapper.entityToDto(booking.getRoom());
+        return BookingDtoRes.builder()
+                .id(booking.getId())
+                .createdAt(booking.getCreatedAt())
+                .endDate(booking.getEndDate())
+                .costumerEmail(booking.getCostumerEmail())
+                .costumerName(booking.getCostumerName())
+                .room(roomDtoRes)
+                .status(booking.getStatus())
+                .startDate(booking.getStartDate())
+                .build();
     }
 }

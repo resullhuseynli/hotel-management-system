@@ -1,45 +1,45 @@
 package com.booking.hotel.mapper;
 
 import com.booking.hotel.dao.HotelDAO;
-import com.booking.hotel.dto.room.RoomDtoReq;
-import com.booking.hotel.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.dto.room.RoomDtoReq;
+import com.booking.hotel.dao.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.model.Hotel;
+import com.booking.hotel.dao.model.Room;
 import com.booking.hotel.exception.NotFoundException;
-import com.booking.hotel.model.Hotel;
-import com.booking.hotel.model.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import static com.booking.hotel.enums.RoomStatus.AVAILABLE;
 
 @Component
 @RequiredArgsConstructor
 public class RoomMapper {
 
     private final HotelDAO hotelDAO;
+    private final HotelMapper hotelMapper;
 
     public Room dtoToEntity(RoomDtoReq roomDtoReq) {
-        Room room = new Room();
-        room.setRoomNumber(roomDtoReq.getRoomNumber());
-        room.setPrice(roomDtoReq.getPrice());
-        room.setStatus(roomDtoReq.getStatus());
-        Optional<Hotel> hotel = hotelDAO.findById(roomDtoReq.getHotelId());
-        if (hotel.isPresent()) {
-            room.setHotel(hotel.get());
-        } else {
-            throw new NotFoundException("Hotel with id " + roomDtoReq.getHotelId() + " not found");
-        }
-        return room;
+        Hotel hotel = hotelDAO.findById(roomDtoReq.getHotelId())
+                .orElseThrow(() -> new NotFoundException("Hotel with id:" + roomDtoReq.getHotelId() + " not found"));
+        return Room.builder()
+                .roomNumber(roomDtoReq.getRoomNumber())
+                .price(roomDtoReq.getPrice())
+                .status(AVAILABLE)
+                .hotel(hotel)
+                .build();
     }
 
     public RoomDtoRes entityToDto(Room room) {
-        RoomDtoRes roomDtoRes = new RoomDtoRes();
-        roomDtoRes.setId(room.getId());
-        roomDtoRes.setRoomNumber(room.getRoomNumber());
-        roomDtoRes.setPrice(room.getPrice());
-        roomDtoRes.setStatus(room.getStatus());
-        roomDtoRes.setHotelId(room.getHotel().getId());
-        roomDtoRes.setCreatedDate(room.getCreatedAt());
-        return roomDtoRes;
+        Hotel hotel = hotelDAO.findById(room.getHotel().getId())
+                .orElseThrow(() -> new NotFoundException("Hotel with id:" + room.getHotel().getId() + " not found"));
+        return RoomDtoRes.builder()
+                .roomNumber(room.getRoomNumber())
+                .price(room.getPrice())
+                .status(room.getStatus())
+                .createdAt(room.getCreatedAt())
+                .id(room.getId())
+                .hotel(hotelMapper.entityToDto(hotel))
+                .build();
     }
 
 }
