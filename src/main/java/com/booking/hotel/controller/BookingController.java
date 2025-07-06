@@ -1,7 +1,7 @@
 package com.booking.hotel.controller;
 
-import com.booking.hotel.dto.booking.BookingDtoReq;
-import com.booking.hotel.dto.booking.BookingDtoRes;
+import com.booking.hotel.dao.dto.booking.BookingDtoReq;
+import com.booking.hotel.dao.dto.booking.BookingDtoRes;
 import com.booking.hotel.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<BookingDtoRes> createBooking(@Valid @RequestBody BookingDtoReq bookingDtoReq) {
-        return ResponseEntity.status(HttpStatus.OK).body(bookingService.addBooking(bookingDtoReq));
+        return ResponseEntity.status(HttpStatus.OK).body(bookingService.createBooking(bookingDtoReq));
     }
 
     @GetMapping
