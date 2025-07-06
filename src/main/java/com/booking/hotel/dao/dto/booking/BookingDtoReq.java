@@ -1,8 +1,5 @@
-package com.booking.hotel.dto.booking;
+package com.booking.hotel.dao.dto.booking;
 
-import com.booking.hotel.enums.BookingStatus;
-import com.booking.hotel.model.Room;
-import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,13 +16,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookingDtoReq {
 
-    @Size(min = 1, max = 255) @NotNull
+    @Size(min = 1, max = 255)
+    @NotNull
     private String costumerName;
-    @Email @NotNull
+    @Email
+    @NotNull
     private String costumerEmail;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
-    private BookingStatus status;
     private Long roomId;
 
 }
