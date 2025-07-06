@@ -2,18 +2,16 @@ package com.booking.hotel.service;
 
 import com.booking.hotel.dao.HotelDAO;
 import com.booking.hotel.dao.RoomDAO;
-import com.booking.hotel.dto.room.RoomDtoReq;
-import com.booking.hotel.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.dto.room.RoomDtoReq;
+import com.booking.hotel.dao.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.model.Hotel;
+import com.booking.hotel.dao.model.Room;
 import com.booking.hotel.exception.NotFoundException;
 import com.booking.hotel.mapper.RoomMapper;
-import com.booking.hotel.model.Hotel;
-import com.booking.hotel.model.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,52 +26,32 @@ public class RoomService {
     }
 
     public List<RoomDtoRes> getAllRoomsByHotelId(Long hotelId) {
-        Optional<List<Room>> rooms = roomDAO.getAllRoomsByHotelId(hotelId);
-        if (rooms.isPresent()) {
-            List<RoomDtoRes> roomDtoResList = new ArrayList<>();
-            for (Room room : rooms.get()) {
-                RoomDtoRes roomDtoRes = roomMapper.entityToDto(room);
-                roomDtoResList.add(roomDtoRes);
-            }
-            return roomDtoResList;
-        } else {
-            throw new NotFoundException("Hotel with id " + hotelId + " not found");
-        }
+        hotelDAO.findById(hotelId)
+                .orElseThrow(() -> new NotFoundException("Hotel with id: " + hotelId + " not found"));
+        return roomDAO.getAllRoomsByHotelId(hotelId).orElseThrow().stream().map(roomMapper::entityToDto).toList();
     }
 
     public RoomDtoRes getRoomById(Long id) {
-        Optional<Room> room = roomDAO.findById(id);
-        if (room.isPresent()) {
-            return roomMapper.entityToDto(room.get());
-        } else {
-            throw new NotFoundException("Room with id " + id + " not found");
-        }
+        Room room = roomDAO.findById(id)
+                .orElseThrow(() -> new NotFoundException("Room with id: " + id + " not found"));
+        return roomMapper.entityToDto(room);
     }
 
     public void deleteRoomById(Long id) {
-        Optional<Room> room = roomDAO.findById(id);
-        if (room.isPresent()) {
-            roomDAO.delete(room.get());
-        } else {
-            throw new NotFoundException("Room with id " + id + " not found");
-        }
+        Room room = roomDAO.findById(id)
+                .orElseThrow(() -> new NotFoundException("Room with id: " + id + " not found"));
+        roomDAO.delete(room);
     }
 
     public RoomDtoRes updateRoom(RoomDtoReq roomDtoReq, Long id) {
-        Optional<Room> room = roomDAO.findById(id);
-        if (room.isPresent()) {
-            room.get().setRoomNumber(roomDtoReq.getRoomNumber());
-            room.get().setPrice(roomDtoReq.getPrice());
-            room.get().setStatus(roomDtoReq.getStatus());
-            Optional<Hotel> hotel = hotelDAO.findById(roomDtoReq.getHotelId());
-            if (hotel.isPresent()) {
-                room.get().setHotel(hotel.get());
-            } else {
-                throw new NotFoundException("Hotel with id " + roomDtoReq.getHotelId() + " not found");
-            }
-            return roomMapper.entityToDto(roomDAO.save(room.get()));
-        } else {
-            throw new NotFoundException("Room with id " + id + " not found");
-        }
+        Room room = roomDAO.findById(id)
+                .orElseThrow(() -> new NotFoundException("Room with id: " + id + " not found"));
+        Hotel hotel = hotelDAO.findById(roomDtoReq.getHotelId())
+                .orElseThrow(() -> new NotFoundException("Hotel with id: " + id + " not found"));
+        room.setRoomNumber(roomDtoReq.getRoomNumber());
+        room.setPrice(roomDtoReq.getPrice());
+        ;
+        room.setHotel(hotel);
+        return roomMapper.entityToDto(roomDAO.save(room));
     }
 }
