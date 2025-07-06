@@ -1,6 +1,6 @@
 package com.booking.hotel.dao;
 
-import com.booking.hotel.model.Room;
+import com.booking.hotel.dao.model.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface RoomDAO extends JpaRepository<Room, Long> {
-    Optional<List<Room>> getAllRoomsByHotelId(long hotelId);
+    Optional<List<Room>> getAllRoomsByHotelId(Long hotelId);
 }
