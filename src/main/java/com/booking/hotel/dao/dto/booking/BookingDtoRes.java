@@ -1,11 +1,8 @@
-package com.booking.hotel.dto.booking;
+package com.booking.hotel.dao.dto.booking;
 
-import com.booking.hotel.dto.room.RoomDtoRes;
+import com.booking.hotel.dao.dto.room.RoomDtoRes;
 import com.booking.hotel.enums.BookingStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class BookingDtoRes {
 
     private Long id;

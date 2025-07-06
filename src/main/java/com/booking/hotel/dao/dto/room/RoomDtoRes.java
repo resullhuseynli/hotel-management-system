@@ -1,5 +1,6 @@
-package com.booking.hotel.dto.room;
+package com.booking.hotel.dao.dto.room;
 
+import com.booking.hotel.dao.dto.hotel.HotelDtoRes;
 import com.booking.hotel.enums.RoomStatus;
 import lombok.*;
 
@@ -10,13 +11,14 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RoomDtoRes {
 
     private Long id;
     private String roomNumber;
     private BigDecimal price;
     private RoomStatus status;
-    private LocalDateTime createdDate;
-    private Long hotelId;
+    private LocalDateTime createdAt;
+    private HotelDtoRes hotel;
 
 }

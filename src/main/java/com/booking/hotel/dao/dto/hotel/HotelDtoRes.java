@@ -1,14 +1,14 @@
-package com.booking.hotel.dto.hotel;
+package com.booking.hotel.dao.dto.hotel;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class HotelDtoRes {
 
     private Long id;
