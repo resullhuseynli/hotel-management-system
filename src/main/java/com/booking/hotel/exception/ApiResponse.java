@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class ApiResponse<T> {
 
     private T message;
-    private final LocalDateTime timestamp =  LocalDateTime.now();
+    private final LocalDateTime timestamp = LocalDateTime.now();
 
     protected ApiResponse(T message) {
         this.message = message;
