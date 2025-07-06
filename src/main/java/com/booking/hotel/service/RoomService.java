@@ -50,7 +50,6 @@ public class RoomService {
                 .orElseThrow(() -> new NotFoundException("Hotel with id: " + id + " not found"));
         room.setRoomNumber(roomDtoReq.getRoomNumber());
         room.setPrice(roomDtoReq.getPrice());
-        ;
         room.setHotel(hotel);
         return roomMapper.entityToDto(roomDAO.save(room));
     }
