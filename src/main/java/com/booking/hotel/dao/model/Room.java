@@ -1,11 +1,9 @@
-package com.booking.hotel.model;
+package com.booking.hotel.dao.model;
 
 import com.booking.hotel.enums.RoomStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,16 +13,21 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Room {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(min = 1, max = 50) @NotNull
+    @Column(nullable = false, length = 50)
     private String roomNumber;
-    @NotNull @Digits(integer = 10, fraction = 2)
+    @Column(nullable = false)
     private BigDecimal price;
+    @Enumerated(EnumType.STRING)
     private RoomStatus status;
-    private final LocalDateTime createdAt =  LocalDateTime.now();
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")
