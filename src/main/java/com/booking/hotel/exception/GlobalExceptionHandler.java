@@ -28,6 +28,11 @@ public class GlobalExceptionHandler<T> {
         return new ResponseEntity<>(new ApiResponse<>(getErrorsMap(errors)), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(RoomIsAlreadyBookedException.class)
+    public ResponseEntity<ApiResponse<String>> handleRoomIsAlreadyBookedException(RoomIsAlreadyBookedException roomIsAlreadyBookedException) {
+        return ResponseEntity.badRequest().body(new ApiResponse<>(roomIsAlreadyBookedException.getMessage()));
+    }
+
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();
         errorResponse.put("errors", errors);
